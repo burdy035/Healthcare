@@ -2,4 +2,6 @@ node_modules/
 
 server/adataset
 
+package-lock.json
+
 #.env
