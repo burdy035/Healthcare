@@ -1,0 +1,64 @@
+.btn-delete {
+    color: #fff;
+    font-size: 17;
+    background-color: #ee0d0d;
+    border: 1px solid #ee0d0d;
+}
+
+.rcs-btn {
+    /* background-color: "" */
+    /* border-radius: 12px; */
+    border: none;
+}
+
+.custom-form-control {
+    background-color: #f0f1f3;
+    padding: 3px 6px;
+}
+
+.has-error {
+    color: #495057;
+    border-color: #ee0d0d !important;
+    outline: 0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 70, 0.25) !important;
+}
+
+.custom-form-control:valid {
+    background-color: #f0f1f3;
+}
+
+.submit-btn {
+    margin-top: 20px;
+    border: 1px solid #fcb321;
+    border-radius: 4px;
+    color: #000;
+    background-color: #fcb321;
+    padding: 3px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.submit-btn-pos {
+    border: 1px solid #f0f1f3;
+    background-color: #f0f1f3;
+}
+.close-section-btn {
+    border-radius: 4px;
+    margin-left: 15px;
+    color: #fff;
+    background-color: #083161;
+    border: 1px solid #083161;
+    padding: 3px 12px;
+}
+
+.react-datepicker__input-container {
+    display: block;
+}
+
+.react-datepicker-wrapper {
+    display: block;
+}
+select.form-control:not([size]):not([multiple]) {
+    height: 28.5px;
+}

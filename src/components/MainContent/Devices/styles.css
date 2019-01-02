@@ -1,0 +1,36 @@
+.content-header {
+    border-width: 1px;
+    border-color: #000;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-bottom-style: solid;
+    border-color: #000;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-add {
+    color: #fff;
+    font-size: 17;
+    background-color: #2979ff;
+    border: 1px solid #2979ff;
+    margin-left: 10px;
+}
+
+.btn-delete {
+    color: #fff;
+    font-size: 17;
+    background-color: #ee0d0d;
+    border: 1px solid #ee0d0d;
+}
+
+.custom-form-control {
+    background-color: #f0f1f3;
+    padding: 3px 6px;
+}
+
+.custom-form-control:valid {
+    background-color: #f0f1f3;
+}

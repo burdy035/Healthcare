@@ -1,0 +1,118 @@
+body {
+    color: #2c2c2c;
+    font-size: 11px;
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+div {
+    display: block;
+}
+
+.main-content {
+    height: calc(100vh - 50px);
+    background: #f0f1f3;
+}
+
+.main-content-padding-20 {
+    height: 100%;
+    padding: 20px;
+}
+
+.main-content-padding-20 > div {
+    height: 100%;
+}
+
+.inner-main-content {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.content-area {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /* display: flex; */
+    flex: 1;
+    /* flex-direction: "column"; */
+    background-color: #fff;
+}
+
+.content-header-text {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.icon-button {
+    background-color: transparent;
+    border: none;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #e6e7e5;
+}
+
+.hospital-beds tbody tr {
+    cursor: pointer;
+}
+
+.table thead th {
+    border: none;
+}
+
+.rcs-row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.form-control {
+    font-size: 11px;
+    height: 29px;
+}
+label {
+    font-weight: 400;
+}
+
+.warning-overlay {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(255, 255, 255, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.warning-modal {
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    border: 1px solid #ee0d0d;
+    background: rgb(255, 255, 255);
+    overflow: auto;
+    border-radius: 4px;
+    outline: none;
+    padding: 0px 20px 0px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 2000;
+    width: 250px;
+    height: 200px;
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 70, 0.25) !important;
+}
+
+.warning-container {
+    flex: 1;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

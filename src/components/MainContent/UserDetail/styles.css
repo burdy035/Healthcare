@@ -1,0 +1,155 @@
+.user-detail-left-block {
+    flex: 0.5;
+    display: flex;
+    margin: 20px 10px 20px 0px;
+    flex-direction: column;
+}
+
+.user-detail-right-block {
+    flex: 0.5;
+    display: flex;
+    margin: 20px 0px 20px 10px;
+    flex-direction: column;
+}
+.user-detail-detail {
+    flex: 0.4;
+    background-color: #fff;
+    margin-top: 10px;
+    overflow: auto;
+}
+.change-password-block {
+    flex: 0.5;
+    background-color: #fff;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.change-password-form-container {
+    padding: 15px 15px 15px 15px;
+    flex: 1;
+    overflow: auto;
+}
+.change-password-form-container > div {
+    display: flex;
+    flex: 1;
+}
+
+.change-password-form-left {
+    flex: 0.5;
+    margin-right: 5px;
+}
+.change-password-form-right {
+    flex: 0.5;
+    margin-left: 5px;
+}
+
+.duty-calendar {
+    background-color: #fff;
+    flex: 0.5;
+    margin-bottom: 10px;
+}
+
+.following-patients {
+    background-color: #fff;
+    flex: 0.6;
+    margin-bottom: 10px;
+}
+
+.user-detail-detail-container {
+    padding: 15px 15px 0px 15px;
+    display: flex;
+    flex: 1;
+}
+
+.custom-form-group {
+    margin-bottom: 10px;
+}
+
+.custom-form-group > .control-label {
+    margin-bottom: 5px;
+}
+
+.user-detail-detail-main-left {
+    flex: 0.5;
+    margin-right: 5px;
+}
+
+.user-detail-detail-main-right {
+    flex: 0.5;
+    margin-left: 5px;
+}
+
+.duty-container {
+    padding: 15px;
+}
+.duty-container .rw-calendar-transition-group {
+    margin-right: 1px;
+}
+
+.my-calendar th {
+    padding: 10px 5px;
+    width: calc(100% / 7);
+    text-align: center;
+}
+
+.my-calendar td {
+    padding: 10px 5px;
+    text-align: center;
+}
+
+.my-calendar .current-day {
+    border: 1px solid #4193d1;
+}
+
+.my-calendar th {
+    border-bottom: 1px solid #4193d1;
+}
+
+.my-calendar {
+    display: flex;
+    border: 1px solid #4193d1;
+}
+.my-calendar tbody {
+    margin-top: 1px;
+}
+
+.my-calendar tbody:before {
+    content: "-";
+    display: block;
+    line-height: 16px;
+    color: transparent;
+}
+
+.my-calendar tbody:after {
+    content: "-";
+    display: block;
+    line-height: 16px;
+    color: transparent;
+}
+
+.on-duty {
+    border: 1px solid #e81e63;
+    cursor: pointer;
+}
+
+.today-have-duty {
+    border: 1px solid #e81e63;
+    cursor: pointer;
+    background-color: #4193d1;
+}
+
+.following-patient-container {
+    padding: 15px 15px 0px 15px;
+}
+
+.patient-item {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #4193d1;
+}
+
+.following-patients .table > thead > tr > th {
+    border: none;
+}

@@ -1,0 +1,61 @@
+.content-area-report-1 {
+    height: 400px;
+
+    /* border: 1px solid; */
+
+    margin: 0px 0px 10px 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.content-area-report-3 {
+    height: 400px;
+    /* border: 1px solid; */
+    margin: 0px 0px 10px 0px;
+    display: flex;
+    flex-direction: row;
+}
+.report-selection {
+    background-color: #fff;
+    flex: 0.2;
+}
+.temperature-chart {
+    flex: 0.8;
+    margin-right: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.cardiac-chart {
+    flex: 0.8;
+    margin-right: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-area-report-2 {
+    height: 350px;
+    /* border: 1px solid; */
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.heart-params-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.heart-params-left {
+    flex: 0.5;
+}
+
+.heart-params-right {
+    flex: 0.5;
+}
+.content-header-12 {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}

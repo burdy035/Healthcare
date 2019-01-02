@@ -1,0 +1,32 @@
+.modal-1 {
+    position: absolute;
+    /* top: 300px; */
+    bottom: 50%;
+    left: 50%;
+    right: 50%;
+    border: 1px solid rgb(204, 204, 204);
+    /* background: rgb(255, 255, 255); */
+    background: #00bcd4;
+    overflow: auto;
+    border-radius: 4px;
+    outline: none;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 2000;
+    width: 300px;
+}
+.overlay-1 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    /* background-color: rgba(255, 255, 255, 0.75); */
+}
+
+.rbc-row-content {
+    z-index: 0 !important;
+}

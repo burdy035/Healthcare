@@ -1,0 +1,21 @@
+.notice-container-1 {
+    width: 220px;
+    max-width: 220px;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    padding: 6px 24px;
+    background-color: #ff3547;
+    color: #fff;
+    border-radius: 4px;
+    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+        0px 6px 10px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+    z-index: 2000;
+}
+
+.notice-inner-1 {
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+}
