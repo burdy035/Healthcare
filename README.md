@@ -2,7 +2,7 @@
 
 # Reporting and tracking system
 
-#Folder structure
+# Folder structure
 
 ```
 |-- public
