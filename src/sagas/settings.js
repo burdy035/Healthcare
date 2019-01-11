@@ -73,3 +73,27 @@ export function* addSettingData(action) {
         }
     }
 }
+
+export function* deleteSetting(action) {
+    let payload = action.payload;
+
+    let response = yield callApi("post", "delete-setting", payload);
+    if (!response) {
+        yield put({
+            type: Actions.DELETE_SETTING_FAIL,
+            error: "Something went wrong!"
+        });
+    } else {
+        if (response && response.error) {
+            yield put({
+                type: Actions.DELETE_SETTING_FAIL,
+                error: response.error
+            });
+        } else {
+            yield put({
+                type: Actions.DELETE_SETTING_SUCCESS,
+                payload: response.data
+            });
+        }
+    }
+}

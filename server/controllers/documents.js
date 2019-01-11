@@ -5,6 +5,7 @@ import svm from "node-svm";
 import Documents from "../models/patientsDocuments";
 import Users from "../models/users";
 import Settings from "../models/settings";
+import Rooms from "../models/rooms";
 import Models from "../models/model";
 
 import { Types } from "mongoose";
@@ -13,11 +14,8 @@ const ObjectId = Types.ObjectId;
 
 const getDocuments = async (req, res) => {
     try {
-        let { userId } = req.query;
+        let { userReq } = req;
 
-        let userReq = await Users.findOne({
-            _id: userId
-        });
         if (userReq) {
             let docs = await queryDocuments(userReq);
 
@@ -61,9 +59,11 @@ const getDocuments = async (req, res) => {
 const addDocument = async (req, res) => {
     try {
         let body = req.body;
+        let { userReq } = req;
 
         const Document = new Documents({
-            ...body
+            ...body,
+            status: "active"
         });
 
         let result = await Document.save();
@@ -74,12 +74,16 @@ const addDocument = async (req, res) => {
                 error: "Không tìm thấy"
             });
         } else {
-            res.status(200).json({
-                success: true,
-                data: {
-                    patientDocuments: [result]
-                }
-            });
+            if (userReq) {
+                let docs = await queryDocuments(userReq);
+
+                res.status(200).json({
+                    success: true,
+                    data: {
+                        documentsList: docs
+                    }
+                });
+            }
         }
     } catch (error) {
         res.status(500).json({
@@ -91,9 +95,9 @@ const addDocument = async (req, res) => {
 
 const getHeartDiseaseRate = async (req, res) => {
     try {
-        const { id } = req.query;
+        const { patientId } = req.query;
 
-        let doc = await Documents.findOne({ _id: ObjectId(id) });
+        let doc = await Documents.findOne({ _id: ObjectId(patientId) });
 
         if (!doc) {
             res.status(404).json({
@@ -103,6 +107,7 @@ const getHeartDiseaseRate = async (req, res) => {
         } else {
             let keys = [
                 "age",
+                "gender",
                 "cp",
                 "trestbps",
                 "chol",
@@ -114,7 +119,7 @@ const getHeartDiseaseRate = async (req, res) => {
             ];
 
             let input = keys.map(k => {
-                return doc[k];
+                return parseFloat(doc[k]);
             });
 
             let mRecord = await Models.findOne({ type: "heartDiseaseRate" });
@@ -135,6 +140,7 @@ const getHeartDiseaseRate = async (req, res) => {
             });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             error: error.message
@@ -179,6 +185,8 @@ const getDocumentsForm = async (req, res) => {
 
 const editDocument = async (req, res) => {
     try {
+        let { userReq } = req;
+
         let {
             _id,
             name,
@@ -223,7 +231,10 @@ const editDocument = async (req, res) => {
                     state: ObjectId(state),
                     doctor: ObjectId(doctor),
                     nurse: ObjectId(nurse),
-                    room: ObjectId(room),
+                    room:
+                        !room || room !== "Chưa xác định"
+                            ? ObjectId(room)
+                            : null,
                     update
                 }
             },
@@ -238,7 +249,7 @@ const editDocument = async (req, res) => {
                 error: "Khong tim thay"
             });
         } else {
-            let docs = await queryDocuments();
+            let docs = await queryDocuments(userReq);
 
             res.status(200).json({
                 success: true,
@@ -259,31 +270,52 @@ const editDocument = async (req, res) => {
 const deleteDocuments = async (req, res) => {
     try {
         let { documentIds } = req.body;
+        let { userReq } = req;
 
-        let doc = await Documents.updateOne(
-            { _id: { $in: documentIds } },
+        let isExist = await Rooms.aggregate([
             {
-                $set: {
-                    status: "delete"
+                $match: {
+                    patient: {
+                        $in: documentIds.map(d => {
+                            return ObjectId(d);
+                        })
+                    }
                 }
             }
-        );
-        if (!doc) {
-            res.status(404).json({
+        ]);
+
+        if (isExist.length > 0) {
+            res.json({
                 success: false,
-                error: "Khong tim thay"
+                error: "Không thể xoá"
             });
         } else {
-            let docs = await queryDocuments();
-
-            res.status(200).json({
-                success: true,
-                data: {
-                    documentsList: docs
+            let doc = await Documents.updateOne(
+                { _id: { $in: documentIds } },
+                {
+                    $set: {
+                        status: "delete"
+                    }
                 }
-            });
+            );
+            if (!doc) {
+                res.status(404).json({
+                    success: false,
+                    error: "Khong tim thay"
+                });
+            } else {
+                let docs = await queryDocuments(userReq);
+
+                res.status(200).json({
+                    success: true,
+                    data: {
+                        documentsList: docs
+                    }
+                });
+            }
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             error: error.message
@@ -340,9 +372,7 @@ const queryDocuments = async userReq => {
                         as: "nurse"
                     }
                 },
-                {
-                    $unwind: "$room"
-                },
+
                 {
                     $unwind: "$state"
                 },
@@ -412,9 +442,7 @@ const queryDocuments = async userReq => {
                         as: "nurse"
                     }
                 },
-                {
-                    $unwind: "$room"
-                },
+
                 {
                     $unwind: "$state"
                 },
@@ -439,11 +467,14 @@ const queryDocuments = async userReq => {
 
         docs = docs.map(doc => {
             let r = doc.room;
+
             let state = doc.state;
-            doc.room = {
-                _id: r._id,
-                label: `${r.room} - Block ${r.block}`
-            };
+            doc.room = doc.room[0]
+                ? {
+                      _id: r[0]._id,
+                      label: `${r[0].room} - Block ${r[0].block}`
+                  }
+                : "Chưa xác định";
             doc.state = {
                 _id: state._id,
                 label: state.label

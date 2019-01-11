@@ -59,6 +59,12 @@ class App extends Component {
                                 <Logout auth={auth} {...props} />
                             )}
                         />
+                        <Route
+                            path="/patient-tracking/:name"
+                            component={props => (
+                                <PatientTracking auth={auth} {...props} />
+                            )}
+                        />
                         <Cont>
                             <Warning />
                             <Route
@@ -153,15 +159,7 @@ class App extends Component {
                                                 />
                                             )}
                                         />
-                                        <Route
-                                            path="/patient-tracking/:name"
-                                            component={props => (
-                                                <PatientTracking
-                                                    auth={auth}
-                                                    {...props}
-                                                />
-                                            )}
-                                        />
+
                                         {/* <Route path="**" component={Error} /> */}
                                     </div>
                                 )}

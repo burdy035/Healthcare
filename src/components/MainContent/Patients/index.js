@@ -19,6 +19,14 @@ class MainContentHospitalBeds extends Component {
                 { field: "gender", label: "Giới tính" }
             ]
         };
+        this.breadcumbs = [
+            { title: "Trang chủ", path: "/" },
+            {
+                title: "Theo dõi bệnh nhân",
+                path: "/patient-tracking",
+                active: true
+            }
+        ];
     }
     _detail(room) {
         let patientName = changeAlias(room.name);
@@ -29,14 +37,6 @@ class MainContentHospitalBeds extends Component {
         });
     }
     render() {
-        let breadcumbs = [
-            { title: "Trang chủ", path: "/" },
-            {
-                title: "Theo dõi bệnh nhân",
-                path: "/patient-tracking",
-                active: true
-            }
-        ];
         return (
             <div className="main-content">
                 <div
@@ -53,7 +53,10 @@ class MainContentHospitalBeds extends Component {
                             // borderWidth: 0.5
                         }}
                     >
-                        <Breadcumbs data={breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
 
                         <div className="inner-main-content">
                             <div className="content-area">

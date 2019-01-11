@@ -16,6 +16,12 @@ export const ADD_SETTING_DATA_FAIL = "ADD_SETTING_DATA_FAIL";
 
 export const ADD_SETTING_DATA_SUCCESS = "ADD_SETTING_DATA_SUCCESS";
 
+export const DELETE_SETTING = "DELETE_SETTING";
+
+export const DELETE_SETTING_FAIL = "DELETE_SETTING_FAIL";
+
+export const DELETE_SETTING_SUCCESS = "DELETE_SETTING_SUCCESS";
+
 export function doGetSettingData() {
     return {
         type: GET_SETTING_DATA
@@ -36,6 +42,15 @@ export const doAddSettingData = values => {
         type: ADD_SETTING_DATA,
         payload: {
             ...values
+        }
+    };
+};
+
+export const doDeleteSetting = value => {
+    return {
+        type: DELETE_SETTING,
+        payload: {
+            settingId: value
         }
     };
 };

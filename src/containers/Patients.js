@@ -33,8 +33,11 @@ class Patients extends Component {
     }
 
     _patientTrackingOnClick(params) {
+        console.log(params);
         this.props.history.push({
-            pathname: `/patient-tracking/${params.patientName}`,
+            pathname: `/patient-tracking/${params.patientName}?id=${
+                params.patientId
+            }`,
             state: {
                 ...params
             }

@@ -39,13 +39,6 @@ class Temperature extends Component {
             let averageHr = [];
 
             Object.keys(hrData).map(k => {
-                // console.log(
-                //     "adad",
-                //     hrData[k].low,
-                //     hrData[k].high,
-                //     hrData[k].average
-                // );
-
                 highHr.push(
                     hrData[k].high === 0 ? this.state.minChart : hrData[k].high
                 );
@@ -61,11 +54,17 @@ class Temperature extends Component {
                 return hrLabels.push(k.slice(0, k.length - 5));
             });
 
+            let max = Math.max(...highHr);
+
             this.setState({
                 hrLabels: hrLabels.reverse(),
                 highHr: highHr.reverse(),
                 lowHr: lowHr.reverse(),
-                averageHr: averageHr.reverse()
+                averageHr: averageHr.reverse(),
+                maxChart:
+                    max > this.state.maxChart
+                        ? max + 10
+                        : this.state.maxChart + 10
             });
         }
     }

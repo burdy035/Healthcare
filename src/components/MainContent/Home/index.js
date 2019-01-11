@@ -30,7 +30,7 @@ class MainContentUsers extends Component {
         this.breadcumbs = [
             { title: "Trang chủ", path: "/" },
             {
-                title: "Theo dõi bệnh nhân",
+                title: "Lịch trực",
                 path: "/patient-tracking",
                 active: true
             }
@@ -61,7 +61,10 @@ class MainContentUsers extends Component {
             <div className="main-content">
                 <div className="main-content-padding-20">
                     <div>
-                        <Breadcumbs data={this.breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
 
                         <div className="inner-main-content">
                             <div

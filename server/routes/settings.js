@@ -18,6 +18,8 @@ const settingRoute = app => {
         checkToken,
         settingsControllers.addSettingData
     );
+
+    app.post("/delete-setting", checkToken, settingsControllers.deleteSetting);
 };
 
 export default settingRoute;

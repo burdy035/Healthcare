@@ -21,7 +21,9 @@ const defaultState = {
     addDeviceDataForm: {},
     devicesList: [],
     editDeviceSuccess: false,
-    addDeviceSuccess: false
+    addDeviceSuccess: false,
+    successMessage: "",
+    errorMessage: ""
 };
 
 export default function searching(state = defaultState, action) {
@@ -50,14 +52,16 @@ export default function searching(state = defaultState, action) {
         case ADD_DEVICE_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: "Có lỗi xảy ra"
             };
         case ADD_DEVICE_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
                 addDeviceSuccess: true,
-                devicesList: action.payload.devicesList
+                devicesList: action.payload.devicesList,
+                successMessage: "Thêm thành công"
             };
 
         case GET_DEVICES:
@@ -84,13 +88,15 @@ export default function searching(state = defaultState, action) {
         case DELETE_DEVICES_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: "Có lỗi xảy ra"
             };
         case DELETE_DEVICES_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
-                devicesList: action.payload.devicesList
+                devicesList: action.payload.devicesList,
+                successMessage: "Xoá thành công"
             };
         case EDIT_DEVICE:
             return {
@@ -100,20 +106,24 @@ export default function searching(state = defaultState, action) {
         case EDIT_DEVICE_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: "Có lỗi xảy ra"
             };
         case EDIT_DEVICE_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
                 editDeviceSuccess: true,
-                devicesList: action.payload.devicesList
+                devicesList: action.payload.devicesList,
+                successMessage: "Sửa thành công"
             };
         default:
             return {
                 ...state,
                 editDeviceSuccess: false,
-                addDeviceSuccess: false
+                addDeviceSuccess: false,
+                successMessage: "",
+                errorMessage: ""
             };
     }
 }

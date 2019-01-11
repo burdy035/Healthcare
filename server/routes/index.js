@@ -16,10 +16,6 @@ import WarningRoutes from "./warning";
 import ReportRoutes from "./report";
 
 const routes = (app, io) => {
-    io.on("connection", socket => {
-        console.log("1234 Connection: ");
-    });
-
     HomeRoutes(app, io);
     Auth(app);
     DevicesRoutes(app);

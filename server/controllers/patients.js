@@ -34,7 +34,6 @@ const getPatientsTrackingList = async (req, res) => {
 
             return d;
         });
-        console.log(docs);
 
         res.status(200).json({
             success: true,

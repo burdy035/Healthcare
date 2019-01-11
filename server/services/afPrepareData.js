@@ -20,18 +20,24 @@ const prepare = async () => {
         let afPredictionModel = await Models.findOne({ type: "afPrediction" });
 
         if (afPredictionModel) {
-            let pre = await csv().fromFile(
-                path.resolve(__dirname, "../adataset/A4336.csv")
+            // let pre = await csv().fromFile(
+            //     path.resolve(__dirname, "../dataset/A4336.csv")
+            // );
+
+            // delete pre[0];
+
+            // let temp = [];
+            // pre.map((row, i) => {
+            //     if (i <= 2000) {
+            //         return temp.push(parseFloat(row["'ECG '"]));
+            //     }
+            // });
+
+            let temp = fs.readFileSync(
+                path.resolve(__dirname, "../dataset/ecg-signals.json")
             );
 
-            delete pre[0];
-
-            let temp = [];
-            pre.map((row, i) => {
-                if (i <= 2000) {
-                    return temp.push(parseFloat(row["'ECG '"]));
-                }
-            });
+            temp = JSON.parse(temp);
 
             await Data.updateOne(
                 {
@@ -80,7 +86,7 @@ const prepare = async () => {
             }
 
             let reference = await csv({ noheader: true }).fromFile(
-                path.resolve(__dirname, "../adataset/reference.csv")
+                path.resolve(__dirname, "../dataset/reference.csv")
             );
 
             reference = reference.reduce((result, ref) => {
@@ -100,7 +106,7 @@ const prepare = async () => {
                 fileNames.map(async (f, i) => {
                     const file = path.resolve(
                         __dirname,
-                        "../adataset/",
+                        "../dataset/",
                         `Af-data/${f}.csv`
                     );
 
@@ -159,7 +165,7 @@ const prepare = async () => {
             );
 
             let pre = await csv().fromFile(
-                path.resolve(__dirname, "../adataset/Af-data/A00005.csv")
+                path.resolve(__dirname, "../dataset/Af-data/A00005.csv")
             );
 
             delete pre[0];

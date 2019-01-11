@@ -11,7 +11,31 @@ const trainHrDetection = async () => {
         });
 
         if (heartRateDetection) {
-            console.log("Saved!");
+            let model = await Models.findOne({
+                type: "heartRateDetection"
+            });
+            var net1 = new brain.NeuralNetwork();
+            let json = JSON.parse(model.model);
+
+            net1.fromJSON(json);
+
+            let hr = [
+                37.5,
+                38.6,
+                38.7,
+                38.8,
+                38.6,
+                38.6,
+                38.7,
+                38.6,
+                38.6,
+                38.7
+            ];
+
+            let hr1 = hr.reduce((result, value) => {
+                result.push(((value - hr[0]) * 10).toFixed(1));
+                return result;
+            }, []);
         } else {
             net.train(
                 [
@@ -30,6 +54,18 @@ const trainHrDetection = async () => {
                     {
                         input: [0, 0, 1, 1, 1, 2, 2, 2, 3, 2],
                         output: { normal: 1 }
+                    },
+                    {
+                        input: [0, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+                        output: { danger: 1 }
+                    },
+                    {
+                        input: [0, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+                        output: { danger: 1 }
+                    },
+                    {
+                        input: [0, 20, 10, 20, 30, 40, 40, 40, 50, 50],
+                        output: { danger: 1 }
                     }
                 ],
                 {

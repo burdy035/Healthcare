@@ -59,11 +59,11 @@ class RcsTable extends Component {
                         return (
                             <tr
                                 key={index}
-                                onClick={() => {
-                                    if (this.props.allowClickOnRow === true) {
-                                        this.props.detail(index);
-                                    }
-                                }}
+                                // onClick={() => {
+                                //     if (this.props.allowClickOnRow === true) {
+                                //         this.props.detail(index);
+                                //     }
+                                // }}
                             >
                                 {this.props.allowCheck === false ? null : (
                                     <td>
@@ -133,7 +133,10 @@ class RcsTable extends Component {
                                         ) {
                                             return (
                                                 <td key={index}>{`${
+                                                    ele[field] &&
                                                     ele[field]["label"]
+                                                        ? ele[field]["label"]
+                                                        : "Chưa xác định"
                                                 }`}</td>
                                             );
                                         }

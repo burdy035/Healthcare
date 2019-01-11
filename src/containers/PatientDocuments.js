@@ -5,6 +5,8 @@ import Topbar from "../components/Topbar";
 
 import Sidebar from "../components/Sidebar";
 
+import Notice from "../components/Notice";
+
 import MainContentPatientDocuments from "../components/MainContent/PatientDocuments";
 
 import {
@@ -38,6 +40,22 @@ class PatientDocument extends Component {
         if (!nextProps.isLoggedIn) {
             this.props.history.push("/login");
         }
+
+        if (nextProps.successMessage) {
+            this.setState({
+                messageDisplay: true,
+                messageType: "success",
+                message: nextProps.successMessage
+            });
+        }
+
+        if (nextProps.errorMessage) {
+            this.setState({
+                messageDisplay: true,
+                messageType: "error",
+                message: nextProps.errorMessage
+            });
+        }
     }
 
     _addDocument(values) {
@@ -57,6 +75,11 @@ class PatientDocument extends Component {
     render() {
         return (
             <div style={{ width: "100%", height: "100%" }}>
+                <Notice
+                    display={this.state.messageDisplay}
+                    type={this.state.messageType}
+                    message={this.state.message}
+                />
                 <Sidebar user={this.props.user} history={this.props.history} />
                 <div style={{ height: "100%", marginLeft: 220 }}>
                     <Topbar
@@ -80,6 +103,7 @@ class PatientDocument extends Component {
                         doctors={this.props.doctors}
                         nurses={this.props.nurses}
                         majors={this.props.majors}
+                        addDocumentSuccess={this.props.addDocumentSuccess}
                     />
                 </div>
             </div>
@@ -89,6 +113,8 @@ class PatientDocument extends Component {
 const mapStateToProps = ({ auth, documents }) => {
     return {
         user: auth.user,
+        successMessage: documents.successMessage,
+        errorMessage: documents.errorMessage,
         isLoggedIn: auth.isLoggedIn,
         documentsList: documents.documentsList,
         heartDiseaseRate: documents.heartDiseaseRate,
@@ -96,7 +122,8 @@ const mapStateToProps = ({ auth, documents }) => {
         editDocumentSuccess: documents.editDocumentSuccess,
         doctors: documents.doctors,
         nurses: documents.nurses,
-        majors: documents.majors
+        majors: documents.majors,
+        addDocumentSuccess: documents.addDocumentSuccess
     };
 };
 export default connect(mapStateToProps)(PatientDocument);

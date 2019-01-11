@@ -20,21 +20,24 @@ class UserDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {};
-
-        this.breadcumbs = [
-            { title: "Trang chủ", path: "/" },
-            {
-                title: "Theo dõi bệnh nhân",
-                path: "/patient-tracking",
-                active: true
-            }
-        ];
     }
 
     componentDidMount() {}
 
     componentWillReceiveProps(nextProps) {}
     render() {
+        let breadcumbs = [
+            { title: "Trang chủ", path: "/" },
+            {
+                title: "Quản lý nhân sự",
+                path: "/users"
+            },
+            {
+                title: this.props.userDetail.name,
+                active: true,
+                path: "/"
+            }
+        ];
         return (
             <div className="main-content" style={{ height: "100%" }}>
                 <div
@@ -42,7 +45,10 @@ class UserDetail extends Component {
                     style={{ paddingBottom: 0 }}
                 >
                     <div>
-                        <Breadcumbs data={this.breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={breadcumbs}
+                        />
 
                         <div className="inner-main-content">
                             <div className="user-detail-left-block">
@@ -56,15 +62,22 @@ class UserDetail extends Component {
                                 />
                                 <InfoDetail
                                     userDetail={this.props.userDetail}
+                                    user={this.props.user}
+                                    majors={this.props.majors}
+                                    changeDetail={values =>
+                                        this.props.changeDetail(values)
+                                    }
                                 />
                             </div>
 
                             <div className="user-detail-right-block">
                                 <Duty userDuties={this.props.userDuties} />
                                 <ChangePassword
+                                    userDetail={this.props.userDetail}
                                     changePassword={values =>
                                         this.props.changePassword(values)
                                     }
+                                    user={this.props.user}
                                 />
                             </div>
                         </div>

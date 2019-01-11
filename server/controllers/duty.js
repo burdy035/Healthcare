@@ -7,11 +7,7 @@ const ObjectId = Types.ObjectId;
 
 const getAllUsers = async (req, res) => {
     try {
-        let { userId } = req.query;
-
-        let userReq = await Users.findOne({
-            _id: userId
-        });
+        let { userReq } = req;
 
         let users = [];
 
@@ -55,6 +51,7 @@ const getAllUsers = async (req, res) => {
             });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             error: "Something went wrong!"
@@ -140,11 +137,10 @@ const addDuty = async (req, res) => {
 
 const getDutiesOfWeek = async (req, res) => {
     try {
-        const { startDay, endDay, userId } = req.body;
+        const { startDay, endDay } = req.body;
 
-        let userReq = await Users.findOne({
-            _id: userId
-        });
+        let { userReq } = req;
+
         if (userReq.role === "admin" || userReq.role === "manager") {
             let duties = await getDuties(startDay, endDay, userReq);
 

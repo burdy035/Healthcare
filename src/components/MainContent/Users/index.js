@@ -54,7 +54,7 @@ class MainContentUsers extends Component {
         this.breadcumbs = [
             { title: "Trang chủ", path: "/" },
             {
-                title: "Theo dõi bệnh nhân",
+                title: "Quản lý nhân sự",
                 path: "/patient-tracking",
                 active: true
             }
@@ -193,14 +193,19 @@ class MainContentUsers extends Component {
     _detail(index) {
         let { user } = this.props;
         let { role } = user;
-        if (role && role.value !== "admin") {
-            return;
-        } else {
+
+        console.log(role);
+        if (
+            (role && role.value === "admin") ||
+            (role && role.value === "manager")
+        ) {
             let currentUser = this.state.data[index];
 
             let name = changeAlias(currentUser.name);
 
             this.props.userDetail({ suffix: name, userId: currentUser._id });
+        } else {
+            return;
         }
     }
 
@@ -213,7 +218,10 @@ class MainContentUsers extends Component {
             <div className="main-content">
                 <div className="main-content-padding-20">
                     <div>
-                        <Breadcumbs data={this.breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
 
                         <div className="inner-main-content">
                             <div
@@ -261,7 +269,8 @@ class MainContentUsers extends Component {
                                                 ? true
                                                 : false,
                                         edit:
-                                            role && role.value === "admin"
+                                            (role && role.value === "admin") ||
+                                            (role && role.value === "manager")
                                                 ? true
                                                 : false
                                     }}
@@ -275,12 +284,9 @@ class MainContentUsers extends Component {
                                         this.state.allCheckboxesAreChecked
                                     }
                                     detail={index => this._detail(index)}
-                                    edit={item => {
-                                        this.setState({
-                                            currentRoom: item,
-                                            currentAction: "edit",
-                                            editSectionVisible: true
-                                        });
+                                    edit={index => this._detail(index)}
+                                    delete={id => {
+                                        this.props.deleteUsers([id]);
                                     }}
                                 />
                             </div>

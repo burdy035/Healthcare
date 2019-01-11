@@ -37,8 +37,8 @@ class MainContentAddDuty extends Component {
         this.breadcumbs = [
             { title: "Trang chủ", path: "/" },
             {
-                title: "Theo dõi bệnh nhân",
-                path: "/patient-tracking",
+                title: "Quản lý lịch trực",
+                path: "/duty",
                 active: true
             }
         ];
@@ -136,8 +136,6 @@ class MainContentAddDuty extends Component {
         if (!this.state.selectedUser._id && !this.state.note) {
             console.log("Select user please");
         } else {
-            console.log(this.state.selectedUser);
-
             this.props.editDuty({
                 startDay: this.state.startDay,
                 endDay: this.state.endDay,
@@ -169,7 +167,10 @@ class MainContentAddDuty extends Component {
             <div className="main-content" id="main">
                 <div className="main-content-padding-20">
                     <div>
-                        <Breadcumbs data={this.breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
 
                         <div className="inner-main-content">
                             <div

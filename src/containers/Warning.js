@@ -7,7 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
     faExclamationTriangle,
-    faHeartbeat
+    faHeartbeat,
+    faTemperatureHigh,
+    faTimes
 } from "@fortawesome/free-solid-svg-icons";
 
 import Modal from "react-modal";
@@ -22,13 +24,9 @@ class Users extends Component {
         this.state = {
             endpoint: "http://localhost:3002",
             isWarning: false,
-            muted: true
+            muted: true,
+            warningList: {}
         };
-
-        // this.audio = new Audio(sound);
-        // this.audio.load();
-        // this.audio.loop = true;
-        // this.audio.muted = true;
     }
     componentDidMount() {
         this.props.dispatch(doConnect());
@@ -42,29 +40,48 @@ class Users extends Component {
         socket.emit("test", "test");
 
         socket.on("warning-bpm", async data => {
-            this.props.dispatch(doGetWarningMessage());
             if (!this.state.isWarning) {
-                console.log("!this.state.isWarning");
-                await this.setState({
+                this.props.dispatch(doGetWarningMessage());
+                this.setState({
                     isWarning: true,
                     muted: false
                 });
-
-                this.refs.audio.load();
-
-                console.log(this.state);
             }
 
-            this.setState({
+            let temp = this.state.warningList;
+
+            temp[`cardiac-${data.patient.id}`] = {
+                type: "cardiac",
                 bpm: data.bpm,
                 patient: data.patient,
                 room: data.room
+            };
+
+            this.setState({
+                warningList: temp
             });
         });
 
         socket.on("warning-temperature", async data => {
-            this.props.dispatch(doGetWarningMessage());
-            console.log("Tem: ", data);
+            if (!this.state.isWarning) {
+                this.props.dispatch(doGetWarningMessage());
+                this.setState({
+                    isWarning: true,
+                    muted: false
+                });
+            }
+            let temp = this.state.warningList;
+
+            temp[`temperature-${data.patient.id}`] = {
+                type: "temperature",
+                temperature: data.temperature,
+                patient: data.patient,
+                room: data.room
+            };
+
+            this.setState({
+                warningList: temp
+            });
         });
     }
 
@@ -72,20 +89,33 @@ class Users extends Component {
         this.socket.disconnect();
     }
 
-    _close() {
-        this.socket.emit("close-warning", "");
-        // this.audio.pause();
+    _closeWarning(type, patientId) {
+        this.socket.emit(`close-warning-${type}-${patientId}`);
+
+        let tmp = this.state.warningList;
+
+        delete tmp[`${type}-${patientId}`];
+
+        let countW = 0;
+
+        Object.keys(tmp).map(k => {
+            if (tmp[k]) {
+                countW++;
+            }
+        });
 
         this.setState({
-            isWarning: false,
-            muted: true
+            warningList: tmp,
+            muted: true,
+            isWarning: countW === 0 ? false : true
         });
     }
 
     render() {
         let currentUrl = window.location.href;
 
-        let route = currentUrl.substr(currentUrl.lastIndexOf("/") + 1);
+        let route = currentUrl.substr(currentUrl.lastIndexOf("/") + 3);
+
         if (route === "login") {
             return null;
         } else {
@@ -93,6 +123,7 @@ class Users extends Component {
                 <div style={{ display: "none" }}>
                     <Modal
                         isOpen={this.state.isWarning}
+                        // isOpen={true}
                         onAfterOpen={this.afterOpenModal}
                         onRequestClose={this.closeModal}
                         className="warning-modal"
@@ -113,7 +144,6 @@ class Users extends Component {
                             style={{
                                 visibility: "hidden",
                                 height: 0
-                                // display: "none"
                             }}
                         >
                             <audio
@@ -128,8 +158,9 @@ class Users extends Component {
                             <div
                                 style={{
                                     display: "flex",
-
-                                    alignItems: "center"
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginBottom: 15
                                 }}
                             >
                                 <FontAwesomeIcon
@@ -141,47 +172,140 @@ class Users extends Component {
                                     }}
                                     icon={faExclamationTriangle}
                                 />
-
-                                <span style={{ fontSize: 17 }}>
-                                    {this.state.room}
-                                </span>
                             </div>
+                            <div className="warning-list-container">
+                                <div className="warning-row">
+                                    <div className="warning-row-room">
+                                        Phòng
+                                    </div>
+                                    <div className="warning-row-patient">
+                                        Bệnh nhân
+                                    </div>
+                                    <div className="warning-row-action" />{" "}
+                                    <div className="warning-row-close" />{" "}
+                                </div>
 
-                            <div style={{ fontSize: 14 }}>
-                                Bệnh nhân: {this.state.patient}
-                            </div>
+                                {Object.keys(this.state.warningList).map(
+                                    (k, i) => {
+                                        let w = this.state.warningList[k];
 
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}
-                            >
-                                <FontAwesomeIcon
-                                    className="human-heart"
-                                    style={{
-                                        color: "red",
-                                        width: 35,
-                                        height: 35,
-                                        marginRight: 15
-                                    }}
-                                    icon={faHeartbeat}
-                                />
-                                <span style={{ fontSize: 14 }}>
-                                    {this.state.bpm}
-                                </span>
-                            </div>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    marginBottom: 5
-                                }}
-                            >
-                                <button onClick={() => this._close()}>
-                                    Close
-                                </button>
+                                        if (w.type === "cardiac") {
+                                            return (
+                                                <div
+                                                    className="warning-row"
+                                                    key={i}
+                                                >
+                                                    <div className="warning-row-room">
+                                                        {w.room}
+                                                    </div>
+                                                    <div className="warning-row-patient">
+                                                        {w.patient.name}
+                                                    </div>
+                                                    <div className="warning-row-action">
+                                                        <FontAwesomeIcon
+                                                            className="human-heart"
+                                                            style={{
+                                                                color: "red",
+                                                                width: 25,
+                                                                height: 25,
+                                                                marginRight: 15,
+                                                                marginLeft: 10
+                                                            }}
+                                                            icon={faHeartbeat}
+                                                        />
+                                                        <span
+                                                            style={{
+                                                                fontSize: 14
+                                                            }}
+                                                        >
+                                                            {w.bpm}
+                                                        </span>
+                                                    </div>
+                                                    <div className="warning-row-close">
+                                                        <button
+                                                            style={{
+                                                                border: "none",
+                                                                backgroundColor:
+                                                                    "transparent"
+                                                            }}
+                                                            onClick={() =>
+                                                                this._closeWarning(
+                                                                    w.type,
+                                                                    w.patient.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <FontAwesomeIcon
+                                                                style={{
+                                                                    color: "red"
+                                                                }}
+                                                                icon={faTimes}
+                                                            />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        } else {
+                                            return (
+                                                <div
+                                                    className="warning-row"
+                                                    key={i}
+                                                >
+                                                    <div className="warning-row-room">
+                                                        {w.room}
+                                                    </div>
+                                                    <div className="warning-row-patient">
+                                                        {w.patient.name}
+                                                    </div>
+                                                    <div className="warning-row-action">
+                                                        <FontAwesomeIcon
+                                                            className="human-heart"
+                                                            style={{
+                                                                color: "red",
+                                                                width: 25,
+                                                                height: 25,
+                                                                marginRight: 15,
+                                                                marginLeft: 10
+                                                            }}
+                                                            icon={
+                                                                faTemperatureHigh
+                                                            }
+                                                        />
+                                                        <span
+                                                            style={{
+                                                                fontSize: 14
+                                                            }}
+                                                        >
+                                                            {w.temperature}
+                                                        </span>
+                                                    </div>
+                                                    <div className="warning-row-close">
+                                                        <button
+                                                            style={{
+                                                                border: "none",
+                                                                backgroundColor:
+                                                                    "transparent"
+                                                            }}
+                                                            onClick={() =>
+                                                                this._closeWarning(
+                                                                    w.type,
+                                                                    w.patient.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <FontAwesomeIcon
+                                                                style={{
+                                                                    color: "red"
+                                                                }}
+                                                                icon={faTimes}
+                                                            />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+                                    }
+                                )}
                             </div>
                         </div>
                     </Modal>

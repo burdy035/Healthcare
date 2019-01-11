@@ -18,6 +18,7 @@ let hrNet = new brain.NeuralNetwork({
 
 let keys = [
     "age",
+    "gender",
     "cp",
     "trestbps",
     "chol",
@@ -63,7 +64,7 @@ const getPatientReport = async (req, res) => {
         let patientDoc = await Documents.findOne({ _id: ObjectId(patientId) });
 
         let hdInput = keys.map(k => {
-            return patientDoc[k];
+            return parseFloat(patientDoc[k]);
         });
 
         let heartDiseaseModel = await Models.findOne({

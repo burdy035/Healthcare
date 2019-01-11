@@ -5,6 +5,8 @@ import Topbar from "../components/Topbar";
 
 import Sidebar from "../components/Sidebar";
 
+import Notice from "../components/Notice";
+
 import MainContentRooms from "../components/MainContent/Rooms";
 
 import {
@@ -36,6 +38,22 @@ class Rooms extends Component {
         if (!nextProps.isLoggedIn) {
             this.props.history.push("/login");
         }
+
+        if (nextProps.successMessage) {
+            this.setState({
+                messageDisplay: true,
+                messageType: "success",
+                message: nextProps.successMessage
+            });
+        }
+
+        if (nextProps.errorMessage) {
+            this.setState({
+                messageDisplay: true,
+                messageType: "error",
+                message: nextProps.errorMessage
+            });
+        }
     }
 
     _addItem(values) {
@@ -50,6 +68,11 @@ class Rooms extends Component {
     render() {
         return (
             <div style={{ width: "100%", height: "100%" }}>
+                <Notice
+                    display={this.state.messageDisplay}
+                    type={this.state.messageType}
+                    message={this.state.message}
+                />
                 <Sidebar user={this.props.user} history={this.props.history} />
                 <div style={{ height: "100%", marginLeft: 220 }}>
                     <Topbar
@@ -76,6 +99,8 @@ class Rooms extends Component {
 const mapStateToProps = ({ auth, rooms }) => {
     return {
         user: auth.user,
+        successMessage: rooms.successMessage,
+        errorMessage: rooms.errorMessage,
         isLoggedIn: auth.isLoggedIn,
         roomList: rooms.roomList,
         devicesDataForm: rooms.devicesDataForm,

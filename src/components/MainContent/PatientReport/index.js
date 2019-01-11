@@ -35,7 +35,7 @@ class PatientReport extends Component {
 
     _getValue(field, type) {
         let before = this.props.beforeParams;
-        let update = this.props.beforeParams;
+        let update = this.props.updateParams;
 
         if (field === "cp") {
             if (type === "before") {
@@ -46,7 +46,7 @@ class PatientReport extends Component {
                 } else if (before.cp === "3") {
                     return "Đau ngực";
                 } else if (before.cp === "4") {
-                    return " Không có triệu chứng";
+                    return "Không có triệu chứng";
                 }
             } else {
                 if (!update[field]) {
@@ -65,22 +65,22 @@ class PatientReport extends Component {
             }
         } else if (field === "restecg") {
             if (type === "before") {
-                if (before.restecg === "1") {
+                if (before.restecg === "0") {
                     return "Bình thường";
-                } else if (before.restecg === "2") {
+                } else if (before.restecg === "1") {
                     return "Sóng ST-T không bình thường";
-                } else if (before.restecg === "3") {
+                } else if (before.restecg === "2") {
                     return "Phì đại thất trái";
                 }
             } else {
                 if (!update[field]) {
                     return "Chưa xác định";
                 } else {
-                    if (before.restecg === "1") {
+                    if (before.restecg === "0") {
                         return "Bình thường";
-                    } else if (before.restecg === "2") {
+                    } else if (before.restecg === "1") {
                         return "Sóng ST-T không bình thường";
-                    } else if (before.restecg === "3") {
+                    } else if (before.restecg === "2") {
                         return "Phì đại thất trái";
                     }
                 }

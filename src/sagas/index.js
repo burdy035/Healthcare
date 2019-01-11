@@ -11,7 +11,12 @@ import {
     editDevice
 } from "./devices";
 import { getDeviceTypes, addDeviceType, deleteDeviceType } from "./deviceTypes";
-import { getSettingData, addDeviceState, addSettingData } from "./settings";
+import {
+    getSettingData,
+    addDeviceState,
+    addSettingData,
+    deleteSetting
+} from "./settings";
 import { getRooms, addRoom, getDeviceInfo, editRoom } from "./rooms";
 import {
     getDocuments,
@@ -27,7 +32,8 @@ import {
     getUsers,
     getUserDetail,
     userChangePassword,
-    deleteUsers
+    deleteUsers,
+    editUserDetail
 } from "./users";
 
 import { getPatientsTrackingList } from "./patients";
@@ -116,6 +122,10 @@ function* mySaga() {
     yield takeEvery(Actions.EDIT_DUTY, editDuty);
 
     yield takeEvery(Actions.DELETE_USERS, deleteUsers);
+
+    yield takeEvery(Actions.DELETE_SETTING, deleteSetting);
+
+    yield takeEvery(Actions.EDIT_USER_DETAIL, editUserDetail);
 }
 
 export default mySaga;

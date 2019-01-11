@@ -6,11 +6,11 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import moment from "moment";
 
-import Breadcumbs from "../Breadcumbs";
+import Breadcumbs from "../../Breadcumbs";
 
-import Table from "../TableComponent";
+import Table from "../../TableComponent";
 
-import AddSection from "../AddSection";
+import AddSection from "../../AddSection";
 
 import "./styles.css";
 
@@ -51,7 +51,7 @@ class MainContentDevices extends Component {
         this.breadcumbs = [
             { title: "Trang chủ", path: "/" },
             {
-                title: "Theo dõi bệnh nhân",
+                title: "Cài đặt",
                 path: "/patient-tracking",
                 active: true
             }
@@ -134,8 +134,6 @@ class MainContentDevices extends Component {
     _addItem(values) {
         values.type = this.state.settingType;
 
-        console.log(values);
-
         this.props.addItem(values);
     }
 
@@ -200,8 +198,10 @@ class MainContentDevices extends Component {
                             height: "100%"
                         }}
                     >
-                        <Breadcumbs data={this.breadcumbs} />
-
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
                         <div
                             className="inner-main-content"
                             style={{
@@ -429,6 +429,9 @@ class MainContentDevices extends Component {
                                             this.state.allCheckboxesAreChecked
                                         }
                                         allowCheck={false}
+                                        delete={values =>
+                                            this.props.delete(values)
+                                        }
                                     />
                                 </div>
                             </div>

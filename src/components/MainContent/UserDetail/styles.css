@@ -12,13 +12,13 @@
     flex-direction: column;
 }
 .user-detail-detail {
-    flex: 0.4;
+    height: 350px;
     background-color: #fff;
     margin-top: 10px;
     overflow: auto;
 }
 .change-password-block {
-    flex: 0.5;
+    height: 350px;
     background-color: #fff;
     margin-top: 10px;
     display: flex;
@@ -46,13 +46,14 @@
 
 .duty-calendar {
     background-color: #fff;
-    flex: 0.5;
+    height: 350px;
     margin-bottom: 10px;
 }
 
 .following-patients {
     background-color: #fff;
-    flex: 0.6;
+    /* flex: 0.6; */
+    height: 350px;
     margin-bottom: 10px;
 }
 

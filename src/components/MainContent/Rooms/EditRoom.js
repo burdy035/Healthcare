@@ -20,10 +20,19 @@ class EditRoom extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.item) {
+            let { item } = nextProps;
+
             Object.keys(nextProps.item).map(k => {
-                this.setState({
-                    [k]: nextProps.item[k]
-                });
+                if (item[k] && item[k]._id) {
+                    console.log("k", k);
+                    this.setState({
+                        [k]: item[k]._id
+                    });
+                } else {
+                    this.setState({
+                        [k]: item[k]
+                    });
+                }
             });
         }
     }
@@ -33,7 +42,7 @@ class EditRoom extends Component {
             [field]: value || ""
         });
 
-        if (this.state.block && this.state.patient && this.state.room) {
+        if (this.state.block && this.state.room) {
             this.setState({
                 submitAvailabel: true
             });
@@ -49,7 +58,6 @@ class EditRoom extends Component {
                 block: this.state.block,
                 cardiacSensor: this.state.cardiacSensor,
                 temperatureSensor: this.state.temperatureSensor,
-                ecgDevice: this.state.ecgDevice,
                 patient: this.state.patient
             };
 
@@ -58,7 +66,6 @@ class EditRoom extends Component {
     }
 
     render() {
-        console.log(this.props);
         const { devicesDataForm } = this.props;
         return (
             <div
@@ -215,42 +222,6 @@ class EditRoom extends Component {
                                         {(
                                             (devicesDataForm["cardiacSensor"] &&
                                                 devicesDataForm["cardiacSensor"]
-                                                    .devices) ||
-                                            []
-                                        ).map((d, i) => {
-                                            return (
-                                                <option key={i} value={d._id}>
-                                                    {d.label}
-                                                </option>
-                                            );
-                                        })}
-                                    </FormControl>
-                                </FormGroup>
-                                <FormGroup
-                                    style={{
-                                        marginTop: 20,
-                                        flex: 0.3
-                                    }}
-                                >
-                                    <ControlLabel>
-                                        Thiết bị đo điện tim
-                                    </ControlLabel>
-                                    <FormControl
-                                        type={"text"}
-                                        componentClass="select"
-                                        value={this.state["ecgDevice"] || ""}
-                                        bsClass={`form-control custom-form-control`}
-                                        onChange={e =>
-                                            this._onChange(
-                                                "ecgDevice",
-                                                e.target.value
-                                            )
-                                        }
-                                    >
-                                        <option value="" />
-                                        {(
-                                            (devicesDataForm["ecgDevice"] &&
-                                                devicesDataForm["ecgDevice"]
                                                     .devices) ||
                                             []
                                         ).map((d, i) => {

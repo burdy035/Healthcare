@@ -18,23 +18,40 @@ class Breadcumbs extends Component {
                     if (!item.active) {
                         if (index === data.length - 1) {
                             return (
-                                <a
-                                    key={index}
-                                    href={`${item.path}`}
-                                    style={{ textDecoration: "none" }}
+                                <span
+                                    onClick={() => {
+                                        this.props.history.push({
+                                            pathname: item.path,
+                                            state: item.state
+                                        });
+                                    }}
+                                    style={{
+                                        textDecoration: "none",
+                                        cursor: "pointer",
+                                        color: "#2979ff"
+                                    }}
                                 >
                                     {item.title}
-                                </a>
+                                </span>
                             );
                         } else {
                             return (
                                 <span key={index}>
-                                    <a
-                                        href={`${item.path}`}
-                                        style={{ textDecoration: "none" }}
+                                    <span
+                                        onClick={() => {
+                                            this.props.history.push({
+                                                pathname: item.path,
+                                                state: item.state
+                                            });
+                                        }}
+                                        style={{
+                                            textDecoration: "none",
+                                            cursor: "pointer",
+                                            color: "#2979ff"
+                                        }}
                                     >
                                         {item.title}
-                                    </a>
+                                    </span>
                                     <span> - </span>
                                 </span>
                             );

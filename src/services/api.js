@@ -14,7 +14,7 @@ export const callApi = function*(method, uStr, params = {}) {
         "user-id": userId
     };
 
-    params.userId = userId;
+    params.id = userId;
 
     try {
         let url = ``;

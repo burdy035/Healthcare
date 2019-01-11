@@ -32,7 +32,8 @@ class PatientTracking extends Component {
             } else {
                 this.setState({
                     patientName: patientName,
-                    patientId: patientId
+                    patientId: patientId,
+                    roomId: roomId
                 });
 
                 this.props.dispatch(patientTracking(roomId));
@@ -43,6 +44,10 @@ class PatientTracking extends Component {
     componentWillReceiveProps(nextProps) {
         if (!nextProps.isLoggedIn) {
             this.props.history.push("/login");
+        }
+
+        if (nextProps.portClosedSuccess) {
+            this.props.dispatch(patientTracking(this.state.roomId));
         }
     }
 
@@ -60,21 +65,33 @@ class PatientTracking extends Component {
     render() {
         return (
             <div style={{ width: "100%", height: "100%" }}>
-                <MainContentPatientTracking
-                    params={{ name: this.state.patientName }}
-                    user={this.props.user}
-                    history={this.props.history}
-                    gotPrediction={this.props.gotPrediction}
-                    getAfPrediction={values => this._getAfPrediction(values)}
-                    patientReportOnClick={() => this._patientReportOnClick()}
-                />
+                <Sidebar user={this.props.user} history={this.props.history} />
+                <div style={{ height: "100%", marginLeft: 220 }}>
+                    <Topbar
+                        user={this.props.user}
+                        history={this.props.history}
+                    />
+                    <MainContentPatientTracking
+                        params={{ name: this.state.patientName }}
+                        user={this.props.user}
+                        history={this.props.history}
+                        gotPrediction={this.props.gotPrediction}
+                        getAfPrediction={values =>
+                            this._getAfPrediction(values)
+                        }
+                        patientReportOnClick={() =>
+                            this._patientReportOnClick()
+                        }
+                    />
+                </div>
             </div>
         );
     }
 }
-const mapStateToProps = ({ auth, patientTracking }) => {
+const mapStateToProps = ({ auth, patientTracking, warning }) => {
     return {
         user: auth.user,
+        portClosedSuccess: warning.portClosedSuccess,
         isLoggedIn: auth.isLoggedIn,
         patientTrackingConnect: patientTracking.patientTrackingConnect,
         gotPrediction: patientTracking.gotPrediction

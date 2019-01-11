@@ -28,6 +28,12 @@ export const DELETE_USERS_FAIL = "DELETE_USERS_FAIL";
 
 export const DELETE_USERS_SUCCESS = "DELETE_USERS_SUCCESS";
 
+export const EDIT_USER_DETAIL = "EDIT_USER_DETAIL";
+
+export const EDIT_USER_DETAIL_FAIL = "EDIT_USER_DETAIL_FAIL";
+
+export const EDIT_USER_DETAIL_SUCCESS = "EDIT_USER_DETAIL_SUCCESS";
+
 export const doAddUser = values => {
     return {
         type: ADD_USER,
@@ -64,6 +70,15 @@ export const doDeleteUsers = userIds => {
         type: DELETE_USERS,
         payload: {
             userIds
+        }
+    };
+};
+
+export const doEditUserDetail = values => {
+    return {
+        type: EDIT_USER_DETAIL,
+        payload: {
+            ...values
         }
     };
 };

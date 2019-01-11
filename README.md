@@ -12,7 +12,7 @@
     |--midelware    //Check token, validate fields
     |--models       //Mongodb models
     |--routes       //Routes
-    |--services     //Traning machine learning model, initial server
+    |--services     //Traning machine learning model, initialize server
     |--shellscript  //Bash shell script for dataset crawler
     |--index.js     //Main js file
 

@@ -59,8 +59,8 @@ class MainContentDevices extends Component {
         this.breadcumbs = [
             { title: "Trang chủ", path: "/" },
             {
-                title: "Theo dõi bệnh nhân",
-                path: "/patient-tracking",
+                title: "Quản lý thiết bị",
+                path: "/devices",
                 active: true
             }
         ];
@@ -203,7 +203,10 @@ class MainContentDevices extends Component {
                             height: "100%"
                         }}
                     >
-                        <Breadcumbs data={this.breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
 
                         <div
                             className="inner-main-content"
@@ -222,7 +225,7 @@ class MainContentDevices extends Component {
                                         Quản lý thiết bị
                                     </span>
 
-                                    {role === "admin" ? (
+                                    {role && role.value === "admin" ? (
                                         <div>
                                             {this._renderDeteleButton()}
 
@@ -248,8 +251,14 @@ class MainContentDevices extends Component {
                                     fields={this.state.columns}
                                     actions={{
                                         detail: true,
-                                        delete: role === "admin" ? true : false,
-                                        edit: role === "admin" ? true : false
+                                        delete:
+                                            role && role.value === "admin"
+                                                ? true
+                                                : false,
+                                        edit:
+                                            role && role.value === "admin"
+                                                ? true
+                                                : false
                                     }}
                                     onChange={(index, checked) =>
                                         this._onCheckboxChange(index, checked)

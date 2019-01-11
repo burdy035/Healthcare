@@ -6,7 +6,7 @@ export function* getDevices(action) {
     let payload = action.payload;
 
     let response = yield callApi("get", "devices", payload);
-    console.log("Aaa", response);
+
     if (!response) {
         yield put({
             type: Actions.GET_DEVICES_FAIL,

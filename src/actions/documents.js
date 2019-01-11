@@ -50,7 +50,9 @@ export const doAddDocument = values => {
 export const doGetHeartDiseaseRate = id => {
     return {
         type: GET_HEART_DISEASE_RATE,
-        payload: { id }
+        payload: {
+            patientId: id
+        }
     };
 };
 

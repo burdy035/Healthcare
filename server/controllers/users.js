@@ -129,12 +129,12 @@ const addUser = async (req, res) => {
 
 export const getUsers = async (req, res) => {
     try {
-        const { userId } = req.query;
+        const { id } = req.query;
 
         let user = await Users.aggregate([
             {
                 $match: {
-                    _id: ObjectId(userId)
+                    _id: ObjectId(id)
                 }
             },
             {
@@ -296,6 +296,7 @@ const queryUsers = async major => {
 const getUserDetail = async (req, res) => {
     try {
         let { userId } = req.query;
+        console.log(userId);
 
         let docs = await Users.aggregate([
             {
@@ -398,8 +399,6 @@ const getUserDetail = async (req, res) => {
         } else {
             let userDetail = docs[0];
 
-            userDetail.role = userDetail.role.label;
-
             userDetail.birthday = moment(userDetail.birthday).format(
                 "MM/DD/YYYY"
             );
@@ -426,46 +425,85 @@ const changePassword = async (req, res) => {
     try {
         let { userId, password, cpassword, oldPassword } = req.body;
 
-        if (password !== cpassword) {
-            res.status(404).json({
-                success: false,
-                error: "Password must match!"
-            });
-        } else {
-            let user = await Users.findOne({ _id: ObjectId(userId) });
+        let { userReq } = req;
 
-            if (!user) {
-                res.status(200).json({
+        if (userReq.role === "admin") {
+            if (password !== cpassword) {
+                res.status(404).json({
                     success: false,
-                    error: "Khong tim thay"
+                    error: "Password must match!"
                 });
             } else {
-                let hashPassword = bcrypt.hashSync(oldPassword, salt);
+                let newPassword = bcrypt.hashSync(password, salt);
 
-                let compare = bcrypt.compareSync(oldPassword, user.password);
+                let result = await Users.updateOne(
+                    {
+                        _id: ObjectId(userId)
+                    },
+                    {
+                        $set: {
+                            password: newPassword
+                        }
+                    }
+                );
 
-                if (!compare) {
+                if (result) {
                     res.status(200).json({
-                        success: false,
-                        error: "Mat khau cu khong dung"
+                        success: true,
+                        data: {}
                     });
                 } else {
-                    let newPassword = bcrypt.hashSync(password, salt);
+                    res.status(200).json({
+                        success: false,
+                        error: "Co loi xay ra"
+                    });
+                }
+            }
+        } else {
+            if (password !== cpassword) {
+                res.status(404).json({
+                    success: false,
+                    error: "Password must match!"
+                });
+            } else {
+                let user = await Users.findOne({ _id: ObjectId(userId) });
 
-                    user.password = newPassword;
+                if (!user) {
+                    res.status(200).json({
+                        success: false,
+                        error: "Khong tim thay"
+                    });
+                } else {
+                    let hashPassword = bcrypt.hashSync(oldPassword, salt);
 
-                    let result = await user.save();
+                    let compare = bcrypt.compareSync(
+                        oldPassword,
+                        user.password
+                    );
 
-                    if (result) {
-                        res.status(200).json({
-                            success: true,
-                            data: {}
-                        });
-                    } else {
+                    if (!compare) {
                         res.status(200).json({
                             success: false,
-                            error: "Co loi xay ra"
+                            error: "Mat khau cu khong dung"
                         });
+                    } else {
+                        let newPassword = bcrypt.hashSync(password, salt);
+
+                        user.password = newPassword;
+
+                        let result = await user.save();
+
+                        if (result) {
+                            res.status(200).json({
+                                success: true,
+                                data: {}
+                            });
+                        } else {
+                            res.status(200).json({
+                                success: false,
+                                error: "Co loi xay ra"
+                            });
+                        }
                     }
                 }
             }
@@ -482,12 +520,121 @@ const changePassword = async (req, res) => {
 
 const deleteUsers = async (req, res) => {
     try {
-        let { userId, userIds } = req.body;
+        let { userIds } = req.body;
 
-        console.log(userIds);
+        let userReq = req.userReq;
+
+        if (userReq.role !== "admin") {
+            res.json({
+                success: false,
+                error: "Permision denied!"
+            });
+        } else {
+            let deleteUsers = await Users.updateMany(
+                {
+                    _id: { $in: userIds }
+                },
+                {
+                    $set: {
+                        status: "delete"
+                    }
+                }
+            );
+
+            if (!deleteUsers) {
+                res.json({
+                    success: false,
+                    error: "Có lỗi xảy ra"
+                });
+            } else {
+                let users;
+
+                if (userReq.role === "admin") {
+                    users = await queryUsers("all");
+                } else if (userReq.role === "manager") {
+                    users = await queryUsers(userReq.major);
+                }
+
+                res.json({
+                    success: true,
+                    data: {
+                        userList: users
+                    }
+                });
+            }
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: "Something went wrong!"
+        });
+    }
+};
+
+const editUserDetail = async (req, res) => {
+    try {
+        const { name, birthday, role, userId, gender } = req.body;
+
+        let result = await Users.updateOne(
+            {
+                _id: ObjectId(userId)
+            },
+            {
+                $set: {
+                    name,
+                    birthday,
+                    role,
+                    gender
+                }
+            }
+        );
+
+        if (result) {
+            let userDetail = await Users.aggregate([
+                {
+                    $match: {
+                        _id: ObjectId(userId)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "Settings",
+                        localField: "role",
+                        foreignField: "role",
+                        as: "role"
+                    }
+                },
+                {
+                    $unwind: "$role"
+                },
+                {
+                    $project: {
+                        status: 0,
+                        __v: 0,
+                        password: 0
+                    }
+                }
+            ]);
+            userDetail = userDetail[0];
+
+            userDetail.birthday = moment(userDetail.birthday).format(
+                "MM/DD/YYYY"
+            );
+
+            res.json({
+                success: true,
+                data: {
+                    userDetail
+                }
+            });
+        } else {
+            res.json({
+                success: false,
+                error: "Có lỗi xảy ra"
+            });
+        }
     } catch (error) {
         console.log(error);
-
         res.status(500).json({
             success: false,
             error: "Something went wrong!"
@@ -500,5 +647,6 @@ export default {
     getUsers,
     getUserDetail,
     changePassword,
-    deleteUsers
+    deleteUsers,
+    editUserDetail
 };

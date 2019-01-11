@@ -7,7 +7,16 @@ import {
     GET_USERS_SUCCESS,
     GET_USER_DETAIL,
     GET_USER_DETAIL_FAIL,
-    GET_USER_DETAIL_SUCCESS
+    GET_USER_DETAIL_SUCCESS,
+    DELETE_USERS,
+    DELETE_USERS_SUCCESS,
+    DELETE_USERS_FAIL,
+    EDIT_USER_DETAIL_FAIL,
+    EDIT_USER_DETAIL_SUCCESS,
+    EDIT_USER_DETAIL,
+    USER_CHANGE_PASSWORD,
+    USER_CHANGE_PASSWORD_FAIL,
+    USER_CHANGE_PASSWORD_SUCCESS
 } from "../actions";
 
 const defaultState = {
@@ -17,7 +26,9 @@ const defaultState = {
     userDetail: {},
     userDuties: {},
     followingPatients: [],
-    majors: []
+    majors: [],
+    errorMessage: "",
+    successMessage: ""
 };
 
 export default function users(state = defaultState, action) {
@@ -32,12 +43,14 @@ export default function users(state = defaultState, action) {
                 ...state,
                 isFetching: false,
                 userList: [...state.userList, action.payload.addedUser],
-                addUserSuccess: true
+                addUserSuccess: true,
+                successMessage: "Thêm thành công"
             };
         case ADD_USER_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: "Có lỗi xảy ra"
             };
         case GET_USERS:
             return {
@@ -74,10 +87,64 @@ export default function users(state = defaultState, action) {
                 userDuties: action.payload.userDuties,
                 followingPatients: action.payload.followingPatients
             };
+        case DELETE_USERS:
+            return {
+                ...state,
+                isFetching: true
+            };
+        case DELETE_USERS_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                userList: action.payload.userList,
+                successMessage: "Xoá thành công"
+            };
+        case DELETE_USERS_FAIL:
+            return {
+                ...state,
+                isFetching: false,
+                errorMessage: "Có lỗi xảy ra"
+            };
+        case EDIT_USER_DETAIL:
+            return {
+                ...state,
+                isFetching: true
+            };
+        case EDIT_USER_DETAIL_FAIL:
+            return {
+                ...state,
+                isFetching: false,
+                errorMessage: action.error ? action.error : "Có lỗi xảy ra"
+            };
+        case EDIT_USER_DETAIL_SUCCESS:
+            return {
+                ...state,
+                successMessage: "Sửa thành công",
+                userDetail: action.payload.userDetail
+            };
+        case USER_CHANGE_PASSWORD:
+            return {
+                ...state,
+                isFetching: false
+            };
+        case USER_CHANGE_PASSWORD_FAIL:
+            return {
+                ...state,
+                isFetching: false,
+                errorMessage: action.error ? action.error : "Có lỗi xảy ra"
+            };
+        case USER_CHANGE_PASSWORD_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                successMessage: "Thay đổi mật khẩu thành công"
+            };
         default:
             return {
                 ...state,
-                addUserSucess: ""
+                addUserSucess: "",
+                successMessage: "",
+                errorMessage: ""
             };
     }
 }

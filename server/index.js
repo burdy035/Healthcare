@@ -45,21 +45,9 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-// io.sockets.on("connection", socket => {
-//     console.log("connection", socket.id);
-// });
-
 routes(api, io);
 
 app.use("/api", api);
-
-// io.on("connection", socket => {
-//     console.log("User connected");
-
-//     socket.on("disconnect", () => {
-//         console.log("user disconnected");
-//     });
-// });
 
 app.listen(process.env.SERVER_PORT || 5001, async err => {
     if (err) {

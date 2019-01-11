@@ -42,6 +42,15 @@ class PatientDocuments extends Component {
                 }
             ]
         };
+
+        this.breadcumbs = [
+            { title: "Trang chủ", path: "/" },
+            {
+                title: "Hồ sơ bệnh nhân",
+                path: "/patient-tracking",
+                active: true
+            }
+        ];
     }
 
     componentWillReceiveProps(nextProps) {
@@ -53,6 +62,13 @@ class PatientDocuments extends Component {
         if (nextProps.editDocumentSuccess) {
             this.setState({
                 editSectionVisible: false,
+                mainContentVisble: true
+            });
+        }
+
+        if (nextProps.addDocumentSuccess) {
+            this.setState({
+                addSectionVisible: false,
                 mainContentVisble: true
             });
         }
@@ -142,15 +158,6 @@ class PatientDocuments extends Component {
         }
     }
     render() {
-        let breadcumbs = [
-            { title: "Trang chủ", path: "/" },
-            {
-                title: "Theo dõi bệnh nhân",
-                path: "/patient-tracking",
-                active: true
-            }
-        ];
-
         let { user } = this.props;
 
         let { role } = user;
@@ -170,7 +177,10 @@ class PatientDocuments extends Component {
                             // borderWidth: 0.5
                         }}
                     >
-                        <Breadcumbs data={breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
 
                         <div className="inner-main-content">
                             <div

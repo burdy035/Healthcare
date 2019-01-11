@@ -9,6 +9,7 @@ let PatientSchema = new mongoose.Schema({
     doctor: Schema.Types.ObjectId,
     nurse: Schema.Types.ObjectId,
     state: Schema.Types.ObjectId,
+    major: Schema.Types.ObjectId,
     cp: String,
     trestbps: String,
     chol: String,

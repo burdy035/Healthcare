@@ -121,3 +121,27 @@ export function* deleteUsers(action) {
         }
     }
 }
+
+export function* editUserDetail(action) {
+    let payload = action.payload;
+
+    let response = yield callApi("post", "edit-user-detail", payload);
+    if (!response) {
+        yield put({
+            type: Actions.EDIT_USER_DETAIL_FAIL,
+            error: "Something went wrong!"
+        });
+    } else {
+        if (response && response.error) {
+            yield put({
+                type: Actions.EDIT_USER_DETAIL_FAIL,
+                error: response.error
+            });
+        } else {
+            yield put({
+                type: Actions.EDIT_USER_DETAIL_SUCCESS,
+                payload: response.data
+            });
+        }
+    }
+}

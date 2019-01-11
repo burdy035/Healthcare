@@ -10,6 +10,8 @@ import Settings from "../models/settings";
 
 import Users from "../models/users";
 
+import Data from "../models/patientData";
+
 const init = async () => {
     try {
         let adminMajor = await Settings.findOneAndUpdate(
@@ -59,8 +61,6 @@ const init = async () => {
                 }
             }
         );
-
-        console.log(initAdmin);
 
         let types = [
             { nameId: "temperatureSensor", label: "Sensor đo nhiệt độ" },

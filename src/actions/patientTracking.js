@@ -10,11 +10,11 @@ export const GET_AF_PREDICTION_SUCCESS = "GET_AF_PREDICTION_SUCCESS";
 
 export const GET_AF_PREDICTION_FAIL = "GET_AF_PREDICTION_FAIL";
 
-export const patientTracking = id => {
+export const patientTracking = roomId => {
     return {
         type: PATIENT_TRACKING,
         payload: {
-            id
+            roomId
         }
     };
 };

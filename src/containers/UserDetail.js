@@ -5,9 +5,15 @@ import Topbar from "../components/Topbar";
 
 import Sidebar from "../components/Sidebar";
 
+import Notice from "../components/Notice";
+
 import MainContentUserDetail from "../components/MainContent/UserDetail";
 
-import { doGetUserDetail, doChangePassword } from "../actions";
+import {
+    doGetUserDetail,
+    doChangePassword,
+    doEditUserDetail
+} from "../actions";
 
 class Users extends Component {
     constructor(props) {
@@ -22,9 +28,11 @@ class Users extends Component {
         if (!isAuthenticated()) {
             this.props.history.push("/login");
         } else {
-            const { state } = this.props.history.location;
+            const { location } = this.props.history;
 
-            if (!state.userId) {
+            const { state } = location;
+
+            if (!state || !state.userId) {
                 this.props.history.push("/");
             } else {
                 this.setState({
@@ -38,6 +46,22 @@ class Users extends Component {
     componentWillReceiveProps(nextProps) {
         if (!nextProps.isLoggedIn) {
             this.props.history.push("/login");
+        }
+
+        if (nextProps.successMessage) {
+            this.setState({
+                messageDisplay: true,
+                messageType: "success",
+                message: nextProps.successMessage
+            });
+        }
+
+        if (nextProps.errorMessage) {
+            this.setState({
+                messageDisplay: true,
+                messageType: "error",
+                message: nextProps.errorMessage
+            });
         }
     }
 
@@ -53,9 +77,20 @@ class Users extends Component {
 
         this.props.dispatch(doChangePassword(values));
     }
+
+    _changeDetail(values) {
+        console.log(values);
+        this.props.dispatch(doEditUserDetail(values));
+    }
+
     render() {
         return (
             <div style={{ width: "100%", height: "100%" }}>
+                <Notice
+                    display={this.state.messageDisplay}
+                    type={this.state.messageType}
+                    message={this.state.message}
+                />
                 <Sidebar user={this.props.user} history={this.props.history} />
                 <div style={{ height: "100%", marginLeft: 220 }}>
                     <Topbar
@@ -65,6 +100,7 @@ class Users extends Component {
 
                     <MainContentUserDetail
                         history={this.props.history}
+                        user={this.props.user}
                         userDetail={this.props.userDetail}
                         userDuties={this.props.userDuties}
                         followingPatients={this.props.followingPatients}
@@ -72,6 +108,8 @@ class Users extends Component {
                         changePassword={values =>
                             this._userChangePassword(values)
                         }
+                        majors={this.props.majors}
+                        changeDetail={values => this._changeDetail(values)}
                     />
                 </div>
             </div>
@@ -81,10 +119,13 @@ class Users extends Component {
 const mapStateToProps = ({ auth, users }) => {
     return {
         user: auth.user,
+        successMessage: users.successMessage,
+        errorMessage: users.errorMessage,
         isLoggedIn: auth.isLoggedIn,
         userDetail: users.userDetail,
         userDuties: users.userDuties,
-        followingPatients: users.followingPatients
+        followingPatients: users.followingPatients,
+        majors: users.majors
     };
 };
 export default connect(mapStateToProps)(Users);

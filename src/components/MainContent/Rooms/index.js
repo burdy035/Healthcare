@@ -46,12 +46,6 @@ class MainContentDevices extends Component {
                     label: "Sensor đo nhịp tim",
                     type: "select",
                     icon: true
-                },
-                {
-                    field: "ecgDevice",
-                    label: "Thiết bị đo điện tim",
-                    type: "select",
-                    icon: true
                 }
             ],
             patient: "",
@@ -67,7 +61,7 @@ class MainContentDevices extends Component {
         this.breadcumbs = [
             { title: "Trang chủ", path: "/" },
             {
-                title: "Theo dõi bệnh nhân",
+                title: "Quản lý phòng bệnh",
                 path: "/patient-tracking",
                 active: true
             }
@@ -154,29 +148,19 @@ class MainContentDevices extends Component {
     }
 
     _editRoom(values) {
-        console.log(values);
-
         this.props.edit(values);
     }
 
     _addRoom(values) {
-        console.log(values);
         this.props.addItem(values);
     }
 
     _editOnClick(index) {
-        console.log(index);
-
-        this.setState(
-            {
-                currentRoom: this.state.data[index],
-                editSectionVisible: true,
-                mainSectionVisible: false
-            },
-            () => {
-                console.log(this.state);
-            }
-        );
+        this.setState({
+            currentRoom: this.state.data[index],
+            editSectionVisible: true,
+            mainSectionVisible: false
+        });
     }
 
     _addRoomOnClick() {
@@ -227,7 +211,10 @@ class MainContentDevices extends Component {
                             height: "100%"
                         }}
                     >
-                        <Breadcumbs data={this.breadcumbs} />
+                        <Breadcumbs
+                            history={this.props.history}
+                            data={this.breadcumbs}
+                        />
 
                         <div
                             className="inner-main-content"
@@ -252,7 +239,7 @@ class MainContentDevices extends Component {
                                     >
                                         Quản lý phòng bệnh
                                     </span>
-                                    {role === "admin" ? (
+                                    {role && role.value === "admin" ? (
                                         <div>
                                             {this._renderDeteleButton()}
 
@@ -282,8 +269,14 @@ class MainContentDevices extends Component {
                                     fields={this.state.columns}
                                     actions={{
                                         detail: true,
-                                        delete: role === "admin" ? true : false,
-                                        edit: role === "admin" ? true : false
+                                        delete:
+                                            role && role.value === "admin"
+                                                ? true
+                                                : false,
+                                        edit:
+                                            role && role.value === "admin"
+                                                ? true
+                                                : false
                                     }}
                                     onChange={(index, checked) =>
                                         this._onCheckboxChange(index, checked)

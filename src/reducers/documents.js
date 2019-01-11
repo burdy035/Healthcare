@@ -14,7 +14,8 @@ import {
     EDIT_DOCUMENT_FAIL,
     DELETE_DOCUMENT,
     DELETE_DOCUMENT_SUCCESS,
-    DELETE_DOCUMENT_FAIL
+    DELETE_DOCUMENT_FAIL,
+    ADD_DOCUMENT_FAIL
 } from "../actions";
 
 const defaultState = {
@@ -24,7 +25,10 @@ const defaultState = {
     patientStates: [],
     doctors: [],
     nurses: [],
-    majors: []
+    majors: [],
+    successMessage: "",
+    errorMessage: "",
+    addDocumentSuccess: false
 };
 
 export default function searching(state = defaultState, action) {
@@ -46,14 +50,19 @@ export default function searching(state = defaultState, action) {
                 ...state,
                 isFetching: true
             };
+        case ADD_DOCUMENT_FAIL:
+            return {
+                ...state,
+                isFetching: false,
+                errorMessage: action.error ? action.error : "Có lỗi xảy ra"
+            };
         case ADD_DOCUMENT_SUCCESS:
             return {
                 ...state,
                 isFetching: true,
-                documentsList: [
-                    ...action.payload.patientDocuments,
-                    ...state.documentsList
-                ]
+                documentsList: action.payload.documentsList,
+                addDocumentSuccess: true,
+                successMessage: "Thêm thành công"
             };
         case GET_HEART_DISEASE_RATE:
             return {
@@ -101,12 +110,14 @@ export default function searching(state = defaultState, action) {
                 ...state,
                 isFetching: false,
                 documentsList: action.payload.documentsList,
-                editDocumentSuccess: true
+                editDocumentSuccess: true,
+                successMessage: "Sửa thành công"
             };
         case EDIT_DOCUMENT_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: "Có lỗi xảy ra"
             };
         case DELETE_DOCUMENT:
             return {
@@ -117,16 +128,21 @@ export default function searching(state = defaultState, action) {
             return {
                 ...state,
                 isFetching: false,
-                documentsList: action.payload.documentsList
+                documentsList: action.payload.documentsList,
+                successMessage: "Xoá thành công"
             };
         case DELETE_DOCUMENT_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: action.error ? action.error : "Có lỗi xảy ra"
             };
         default:
             return {
-                ...state
+                ...state,
+                successMessage: "",
+                errorMessage: "",
+                addDocumentSuccess: false
             };
     }
 }

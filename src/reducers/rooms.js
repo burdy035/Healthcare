@@ -18,7 +18,9 @@ const defaultState = {
     roomList: [],
     devicesDataForm: [],
     addRoomSuccess: false,
-    editRoomSuccess: false
+    editRoomSuccess: false,
+    errorMessage: "",
+    successMessage: ""
 };
 
 export default function settings(state = defaultState, action) {
@@ -48,14 +50,16 @@ export default function settings(state = defaultState, action) {
         case ADD_ROOM_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: action.error ? action.error : "Thêm thất bại"
             };
         case ADD_ROOM_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
                 roomList: [...action.payload.roomList, ...state.roomList],
-                addRoomSuccess: true
+                addRoomSuccess: true,
+                successMessage: "Thêm thành công"
             };
         case EDIT_ROOM:
             return {
@@ -65,13 +69,16 @@ export default function settings(state = defaultState, action) {
         case EDIT_ROOM_FAIL:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                errorMessage: action.error ? action.error : "Thêm thất bại"
             };
         case EDIT_ROOM_SUCCESS:
             return {
                 ...state,
                 isFetching: false,
-                editRoomSuccess: true
+                editRoomSuccess: true,
+                successMessage: "Sửa thành công",
+                roomList: action.payload.roomList
             };
         case GET_DEVICE_INFO:
             return {
@@ -94,7 +101,9 @@ export default function settings(state = defaultState, action) {
             return {
                 ...state,
                 addRoomSuccess: false,
-                editRoomSuccess: false
+                editRoomSuccess: false,
+                errorMessage: "",
+                successMessage: ""
             };
     }
 }

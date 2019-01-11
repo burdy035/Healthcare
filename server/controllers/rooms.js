@@ -13,7 +13,10 @@ const getRooms = async (req, res) => {
         let rooms = await Rooms.aggregate([
             {
                 $match: {
-                    status: "active"
+                    status: "active",
+                    patient: {
+                        $ne: null
+                    }
                 }
             },
             {
@@ -32,19 +35,27 @@ const getRooms = async (req, res) => {
                     room: 1,
                     temperatureSensor: 1,
                     cardiacSensor: 1,
-                    ecgDevice: 1,
                     block: 1,
                     "patient.name": 1,
                     "patient._id": 1
                 }
             }
         ]);
+        console.log(rooms);
+        let rooms2 = await Rooms.find({
+            status: "active",
+            patient: {
+                $eq: null
+            }
+        });
 
         rooms = rooms.map(r => {
-            r.patient = r.patient.name;
+            r.patient = { _id: r.patient._id, label: r.patient.name };
 
             return r;
         });
+
+        rooms = rooms.concat(rooms2);
 
         if (rooms) {
             res.status(200).json({
@@ -60,6 +71,7 @@ const getRooms = async (req, res) => {
             });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             error: error.message
@@ -74,37 +86,78 @@ const addRoom = async (req, res) => {
             block,
             patient,
             temperatureSensor,
-            cardiacSensor,
-            ecgDevice
+            cardiacSensor
         } = req.body;
 
-        let newRoom = new Rooms({
-            room,
-            temperatureSensor: ObjectId(temperatureSensor),
-            cardiacSensor: ObjectId(cardiacSensor),
-            ecgDevice: ObjectId(ecgDevice),
-            block,
-            patient: ObjectId(patient)
-        });
-
-        let result = await newRoom.save();
-
-        if (!result) {
-            res.status(404).json({
-                success: false,
-                error: "Thêm thất bại"
-            });
-        } else {
-            delete result.status;
-
-            res.status(200).json({
-                success: true,
-                data: {
-                    roomList: [result]
-                }
+        let isExistTemp;
+        let isExistCardiac;
+        let isPatient;
+        if (temperatureSensor) {
+            isExistTemp = await Rooms.find({
+                temperatureSensor: ObjectId(temperatureSensor)
             });
         }
+
+        if (cardiacSensor) {
+            isExistCardiac = await Rooms.find({
+                cardiacSensor: ObjectId(cardiacSensor)
+            });
+        }
+
+        if (patient) {
+            isPatient = await Rooms.find({
+                patient: ObjectId(patient)
+            });
+        }
+
+        if (isExistTemp && isExistTemp.length) {
+            res.json({
+                success: false,
+                error: "Thiết bị đã được sử dụng"
+            });
+        } else if (isExistCardiac && isExistCardiac.length) {
+            res.json({
+                success: false,
+                error: "Thiết bị đã được sử dụng"
+            });
+        } else if (isPatient && isPatient.length) {
+            res.json({
+                success: false,
+                error: "Bệnh nhân đã ở phòng khác"
+            });
+        } else {
+            let newRoom = new Rooms({
+                room,
+                temperatureSensor: temperatureSensor
+                    ? ObjectId(temperatureSensor)
+                    : null,
+                cardiacSensor: cardiacSensor ? ObjectId(cardiacSensor) : null,
+                block,
+                patient: patient ? ObjectId(patient) : null
+            });
+
+            let result = await newRoom.save();
+
+            console.log(result);
+
+            if (!result) {
+                res.status(404).json({
+                    success: false,
+                    error: "Thêm thất bại"
+                });
+            } else {
+                delete result.status;
+
+                res.status(200).json({
+                    success: true,
+                    data: {
+                        roomList: [result]
+                    }
+                });
+            }
+        }
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             error: error.message
@@ -114,7 +167,7 @@ const addRoom = async (req, res) => {
 
 const getDevicesInfo = async (req, res) => {
     try {
-        let categories = ["temperatureSensor", "ecgDevice", "cardiacSensor"];
+        let categories = ["temperatureSensor", "cardiacSensor"];
 
         let docs = await DeviceTypes.aggregate([
             {
@@ -133,8 +186,6 @@ const getDevicesInfo = async (req, res) => {
         ]);
 
         let devicesDataForm = docs.reduce((result, doc) => {
-            console.log(doc.nameId);
-
             result[doc.nameId] = { ...doc };
 
             return result;
@@ -173,56 +224,158 @@ const getDevicesInfo = async (req, res) => {
 
 const editRoom = async (req, res) => {
     try {
-        console.log(req.body);
-
         const {
             roomId,
             room,
             block,
             patient,
             temperatureSensor,
-            ecgDevice,
             cardiacSensor
         } = req.body;
 
-        let result = await Rooms.updateOne(
-            { _id: ObjectId(roomId) },
-            {
-                $set: {
-                    patient: ObjectId(patient),
-                    block,
-                    room,
-                    temperatureSensor: temperatureSensor
-                        ? ObjectId(temperatureSensor)
-                        : null,
-                    cardiacSensor: cardiacSensor
-                        ? ObjectId(cardiacSensor)
-                        : null,
-                    ecgDevice: ecgDevice ? ObjectId(ecgDevice) : null
-                }
-            }
-        );
+        let isExistTemp;
+        let isExistCardiac;
+        let isPatient;
+        if (temperatureSensor) {
+            isExistTemp = await Rooms.findOne({
+                temperatureSensor: ObjectId(temperatureSensor)
+            });
 
-        if (!result) {
-            res.status(404).json({
+            if (isExistTemp && `${isExistTemp._id}` === `${roomId}`) {
+                isExistTemp = null;
+            }
+        }
+
+        if (cardiacSensor) {
+            isExistCardiac = await Rooms.findOne({
+                cardiacSensor: ObjectId(cardiacSensor)
+            });
+
+            if (isExistCardiac && `${isExistCardiac._id}` === `${roomId}`) {
+                isExistCardiac = null;
+            }
+        }
+
+        if (patient) {
+            isPatient = await Rooms.findOne({
+                patient: ObjectId(patient)
+            });
+
+            if (isPatient && `${isPatient._id}` === `${roomId}`) {
+                isPatient = null;
+            }
+        }
+        console.log(isExistTemp, isExistCardiac, isPatient);
+        if (isExistTemp) {
+            res.json({
                 success: false,
-                error: "Lỗi xảy ra"
+                error: "Thiết bị đã được sử dụng"
+            });
+        } else if (isExistCardiac) {
+            res.json({
+                success: false,
+                error: "Thiết bị đã được sử dụng"
+            });
+        } else if (isPatient) {
+            res.json({
+                success: false,
+                error: "Bệnh nhân đã ở phòng khác"
             });
         } else {
-            res.status(200).json({
-                success: false,
-                data: {
-                    updatedRoom: [...result]
+            let result = await Rooms.updateOne(
+                { _id: ObjectId(roomId) },
+                {
+                    $set: {
+                        patient: patient ? ObjectId(patient) : null,
+                        block,
+                        room,
+                        temperatureSensor: temperatureSensor
+                            ? ObjectId(temperatureSensor)
+                            : null,
+                        cardiacSensor: cardiacSensor
+                            ? ObjectId(cardiacSensor)
+                            : null
+                    }
                 }
-            });
+            );
+
+            if (!result) {
+                res.status(404).json({
+                    success: false,
+                    error: "Lỗi xảy ra"
+                });
+            } else {
+                let rooms = await queryRooms();
+
+                res.status(200).json({
+                    success: false,
+                    data: {
+                        roomList: [...rooms]
+                    }
+                });
+            }
         }
     } catch (error) {
         console.log(error);
-
         res.status(500).json({
             success: false,
             error: error.message
         });
+    }
+};
+
+const queryRooms = async () => {
+    try {
+        let rooms = await Rooms.aggregate([
+            {
+                $match: {
+                    status: "active",
+                    patient: {
+                        $ne: null
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "Patients",
+                    localField: "patient",
+                    foreignField: "_id",
+                    as: "patient"
+                }
+            },
+            {
+                $unwind: "$patient"
+            },
+            {
+                $project: {
+                    room: 1,
+                    temperatureSensor: 1,
+                    cardiacSensor: 1,
+                    block: 1,
+                    "patient.name": 1,
+                    "patient._id": 1
+                }
+            }
+        ]);
+
+        let rooms2 = await Rooms.find({
+            status: "active",
+            patient: {
+                $eq: null
+            }
+        });
+
+        rooms = rooms.map(r => {
+            r.patient = r.patient.name;
+
+            return r;
+        });
+
+        rooms = rooms.concat(rooms2);
+
+        return rooms;
+    } catch (error) {
+        throw error;
     }
 };
 

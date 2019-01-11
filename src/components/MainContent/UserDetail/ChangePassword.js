@@ -12,35 +12,57 @@ class ChangePassword extends Component {
         };
     }
     async _onChange(field, value) {
+        const { user } = this.props;
+        const { role } = user;
         await this.setState({
             [field]: value
         });
-
-        if (
-            this.state.password &&
-            this.state.cpassword &&
-            this.state.oldPassword
-        ) {
+        if (role && role.value !== "admin") {
+            if (
+                this.state.password &&
+                this.state.cpassword &&
+                this.state.oldPassword
+            ) {
+                this.setState({
+                    submitAvailabel: true
+                });
+            }
+        } else if (this.state.password && this.state.cpassword) {
             this.setState({
                 submitAvailabel: true
             });
         }
     }
     _submit() {
-        if (
-            this.state.password &&
-            this.state.cpassword &&
-            this.state.oldPassword
-        ) {
-            this.props.changePassword({
-                password: this.state.password,
-                cpassword: this.state.password,
-                oldPassword: this.state.oldPassword
-            });
+        const { user } = this.props;
+        const { role } = user;
+        if (role && role.value !== "admin") {
+            if (
+                this.state.password &&
+                this.state.cpassword &&
+                this.state.oldPassword
+            ) {
+                this.props.changePassword({
+                    password: this.state.password,
+                    cpassword: this.state.password,
+                    oldPassword: this.state.oldPassword
+                });
+            }
+        } else {
+            if (this.state.password && this.state.cpassword) {
+                this.props.changePassword({
+                    password: this.state.password,
+                    cpassword: this.state.password,
+                    oldPassword: this.state.oldPassword
+                });
+            }
         }
     }
 
     render() {
+        const { user } = this.props;
+        const { role } = user;
+
         return (
             <div className="change-password-block">
                 <div className="content-header">
@@ -63,20 +85,22 @@ class ChangePassword extends Component {
                                     }
                                 />
                             </FormGroup>
-                            <FormGroup>
-                                <ControlLabel>Mật khẩu cũ</ControlLabel>
-                                <FormControl
-                                    type={"text"}
-                                    value={this.state.oldPassword || ""}
-                                    bsClass={`form-control custom-form-control`}
-                                    onChange={e =>
-                                        this._onChange(
-                                            "oldPassword",
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                            </FormGroup>
+                            {role && role.value !== "admin" ? (
+                                <FormGroup>
+                                    <ControlLabel>Mật khẩu cũ</ControlLabel>
+                                    <FormControl
+                                        type={"text"}
+                                        value={this.state.oldPassword || ""}
+                                        bsClass={`form-control custom-form-control`}
+                                        onChange={e =>
+                                            this._onChange(
+                                                "oldPassword",
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                </FormGroup>
+                            ) : null}
                         </div>
                         <div className="change-password-form-right">
                             <FormGroup>
@@ -95,22 +119,28 @@ class ChangePassword extends Component {
                             </FormGroup>
                         </div>
                     </div>
-                    <button
-                        className={`submit-btn ${
-                            !this.state.submitAvailabel ? "submit-btn-pos" : ""
-                        }`}
-                        onClick={() => this._submit()}
-                    >
-                        {!this.state.submitAvailabel ? (
-                            <CircularProgress
-                                style={{
-                                    marginRight: 10
-                                }}
-                                size={16}
-                            />
-                        ) : null}
-                        Đổi mật khẩu
-                    </button>
+
+                    {user._id === this.props.userDetail._id ||
+                    (role && role.value === "admin") ? (
+                        <button
+                            className={`submit-btn ${
+                                !this.state.submitAvailabel
+                                    ? "submit-btn-pos"
+                                    : ""
+                            }`}
+                            onClick={() => this._submit()}
+                        >
+                            {!this.state.submitAvailabel ? (
+                                <CircularProgress
+                                    style={{
+                                        marginRight: 10
+                                    }}
+                                    size={16}
+                                />
+                            ) : null}
+                            Đổi mật khẩu
+                        </button>
+                    ) : null}
                 </div>
             </div>
         );
